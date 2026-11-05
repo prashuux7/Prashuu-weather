@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRASHUU</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background: #f3eee5;
+  color: #29251f;
+  font-family: Georgia, serif;
+  text-align: center;
+  padding: 25px 16px;
+}
+
+header {
+  padding: 18px;
+  letter-spacing: 4px;
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.subtitle {
+  color: #8e806e;
+  font-size: 13px;
+  margin: 10px 0 30px;
+}
+
+.search-box {
+  max-width: 450px;
+  margin: auto;
+  display: flex;
+  gap: 8px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 15px;
+  border: 1px solid #d9d0c3;
+  border-radius: 30px;
+  background: #fffdf9;
+  font-size: 14px;
+  outline: none;
+}
+
+button {
+  padding: 14px 20px;
+  border: none;
+  border-radius: 30px;
+  background: #29251f;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #8e806e;
+}
+
+.weather-card {
+  display: none;
+  max-width: 450px;
+  margin: 30px auto;
+  padding: 35px 20px;
+  background: #e9e1d5;
+  border-radius: 22px;
+}
+
+.city {
+  font-size: 25px;
+  margin-bottom: 12px;
+}
+
+.weather-icon {
+  font-size: 65px;
+  margin: 15px;
+}
+
+.temperature {
+  font-size: 55px;
+  margin: 10px;
+}
+
+.condition {
+  color: #8e806e;
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.detail {
+  background: #f8f4ed;
+  padding: 18px 8px;
+  border-radius: 15px;
+  font-size: 13px;
+}
+
+.detail strong {
+  display: block;
+  font-size: 19px;
+  margin-top: 8px;
+}
+
+.message {
+  margin-top: 22px;
+  font-size: 13px;
+  color: #8e806e;
+}
+
+footer {
+  margin-top: 50px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #8e806e;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>HYY WEATHER</header>
+
+<p class="subtitle">Discover the weather around you.</p>
+
+<div class="search-box">
+  <input
+    type="text"
+    id="cityInput"
+    placeholder="Enter city name..."
+  >
+  <button onclick="searchWeather()">Search</button>
+</div>
+
+<div class="weather-card" id="weatherCard">
+
+  <h2 class="city" id="cityName"></h2>
+
+  <div class="weather-icon" id="weatherIcon">☀️</div>
+
+  <div class="temperature" id="temperature"></div>
+
+  <p class="condition" id="condition"></p>
+
+  <div class="details">
+
+    <div class="detail">
+      Wind Speed
+      <strong id="wind"></strong>
+    </div>
+
+    <div class="detail">
+      Rain Chance Today
+      <strong id="rain"></strong>
+    </div>
+
+    <div class="detail">
+      Humidity
+      <strong id="humidity"></strong>
+    </div>
+
+    <div class="detail">
+      Feels Like
+      <strong id="feels"></strong>
+    </div>
+
+  </div>
+</div>
+
+<p class="message" id="message">
+  Search for a city to see its live weather.
+</p>
+
+<footer>
+  © 2026 HYY WEATHER
+</footer>
+
+<script>
+const input = document.getElementById("cityInput");
+
+input.addEventListener("keydown", function(event) {
+  if (event.key === "Enter") searchWeather();
+});
+
+function getWeatherInfo(code) {
+  if (code === 0) return ["☀️", "Clear sky"];
+  if (code === 1) return ["🌤️", "Mainly clear"];
+  if (code === 2) return ["⛅", "Partly cloudy"];
+  if (code === 3) return ["☁️", "Overcast"];
+  if ([45, 48].includes(code)) return ["🌫️", "Fog"];
+  if ([51, 53, 55, 56, 57].includes(code)) return ["🌦️", "Drizzle"];
+  if ([61, 63, 65, 66, 67].includes(code)) return ["🌧️", "Rain"];
+  if ([71, 73, 75, 77].includes(code)) return ["❄️", "Snow"];
+  if ([80, 81, 82].includes(code)) return ["🌧️", "Rain showers"];
+  if ([85, 86].includes(code)) return ["🌨️", "Snow showers"];
+  if ([95, 96, 99].includes(code)) return ["⛈️", "Thunderstorm"];
+  return ["🌡️", "Weather update"];
+}
+
+async function searchWeather() {
+  const city = input.value.trim();
+  const message = document.getElementById("message");
+  const card = document.getElementById("weatherCard");
+
+  if (!city) {
+    message.textContent = "Please enter a city name.";
+    card.style.display = "none";
+    return;
+  }
+
+  message.textContent = "Loading weather...";
+  card.style.display = "none";
+
+  try {
+    const geoURL =
+      "https://geocoding-api.open-meteo.com/v1/search?name=" +
+      encodeURIComponent(city) + "&count=1&language=en&format=json";
+
+    const geoResponse = await fetch(geoURL);
+    if (!geoResponse.ok) throw new Error("City search failed.");
+
+    const geoData = await geoResponse.json();
+
+    if (!geoData.results || geoData.results.length === 0) {
+      throw new Error("City not found. Try another name.");
+    }
+
+    const place = geoData.results[0];
+
+    const weatherURL =
+      "https://api.open-meteo.com/v1/forecast?latitude=" +
+      place.latitude +
+      "&longitude=" +
+      place.longitude +
+      "&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m" +
+      "&daily=precipitation_probability_max" +
+      "&timezone=auto";
+
+    const weatherResponse = await fetch(weatherURL);
+    if (!weatherResponse.ok) throw new Error("Weather data unavailable.");
+
+    const data = await weatherResponse.json();
+    const current = data.current;
+    const info = getWeatherInfo(current.weather_code);
+
+    document.getElementById("cityName").textContent =
+      place.name + (place.country ? ", " + place.country : "");
+
+    document.getElementById("weatherIcon").textContent = info[0];
+
+    document.getElementById("temperature").textContent =
+      Math.round(current.temperature_2m) + "°C";
+
+    document.getElementById("condition").textContent = info[1];
+
+    document.getElementById("wind").textContent =
+      current.wind_speed_10m + " km/h";
+
+    document.getElementById("rain").textContent =
+      (data.daily.precipitation_probability_max[0] ?? "—") + "%";
+
+    document.getElementById("humidity").textContent =
+      current.relative_humidity_2m + "%";
+
+    document.getElementById("feels").textContent =
+      Math.round(current.apparent_temperature) + "°C";
+
+    card.style.display = "block";
+    message.textContent = "Weather updated just now.";
+
+  } catch (error) {
+    message.textContent = error.message ||
+      "Something went wrong. Please try again.";
+    card.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
