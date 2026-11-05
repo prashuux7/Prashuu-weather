@@ -1,1 +1,9 @@
-
+{
+  "name": "PRASHUU WEATHER",
+  "short_name": "PRASHUU",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3eee5",
+  "theme_color": "#29251f",
+  "description": "PRASHUU WEATHER app"
+}
