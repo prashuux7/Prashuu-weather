@@ -1,9 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PRASHUU</title>
+<title>PRASHUU WEATHER</title>
+
+<meta name="theme-color" content="#29251f">
+<meta name="description" content="PRASHUU WEATHER - Discover the weather around you.">
+<link rel="manifest" href="./manifest.json">
 
 <style>
 * {
@@ -126,57 +131,31 @@ footer {
   letter-spacing: 2px;
   color: #8e806e;
 }
-
 </style>
 </head>
 
 <body>
 
-<header>PRASHU WEATHER</header>
+<header>PRASHUU WEATHER</header>
 
 <p class="subtitle">Discover the weather around you.</p>
 
 <div class="search-box">
-  <input
-    type="text"
-    id="cityInput"
-    placeholder="Enter city name..."
-  >
+  <input type="text" id="cityInput" placeholder="Enter city name...">
   <button onclick="searchWeather()">Search</button>
 </div>
 
 <div class="weather-card" id="weatherCard">
-
   <h2 class="city" id="cityName"></h2>
-
   <div class="weather-icon" id="weatherIcon">☀️</div>
-
   <div class="temperature" id="temperature"></div>
-
   <p class="condition" id="condition"></p>
 
   <div class="details">
-
-    <div class="detail">
-      Wind Speed
-      <strong id="wind"></strong>
-    </div>
-
-    <div class="detail">
-      Rain Chance Today
-      <strong id="rain"></strong>
-    </div>
-
-    <div class="detail">
-      Humidity
-      <strong id="humidity"></strong>
-    </div>
-
-    <div class="detail">
-      Feels Like
-      <strong id="feels"></strong>
-    </div>
-
+    <div class="detail">Wind Speed<strong id="wind"></strong></div>
+    <div class="detail">Rain Chance Today<strong id="rain"></strong></div>
+    <div class="detail">Humidity<strong id="humidity"></strong></div>
+    <div class="detail">Feels Like<strong id="feels"></strong></div>
   </div>
 </div>
 
@@ -184,9 +163,7 @@ footer {
   Search for a city to see its live weather.
 </p>
 
-<footer>
-  © 2026 HYY WEATHER
-</footer>
+<footer>© 2026 PRASHUU WEATHER</footer>
 
 <script>
 const input = document.getElementById("cityInput");
@@ -200,13 +177,13 @@ function getWeatherInfo(code) {
   if (code === 1) return ["🌤️", "Mainly clear"];
   if (code === 2) return ["⛅", "Partly cloudy"];
   if (code === 3) return ["☁️", "Overcast"];
-  if ([45, 48].includes(code)) return ["🌫️", "Fog"];
-  if ([51, 53, 55, 56, 57].includes(code)) return ["🌦️", "Drizzle"];
-  if ([61, 63, 65, 66, 67].includes(code)) return ["🌧️", "Rain"];
-  if ([71, 73, 75, 77].includes(code)) return ["❄️", "Snow"];
-  if ([80, 81, 82].includes(code)) return ["🌧️", "Rain showers"];
-  if ([85, 86].includes(code)) return ["🌨️", "Snow showers"];
-  if ([95, 96, 99].includes(code)) return ["⛈️", "Thunderstorm"];
+  if ([45,48].includes(code)) return ["🌫️", "Fog"];
+  if ([51,53,55,56,57].includes(code)) return ["🌦️", "Drizzle"];
+  if ([61,63,65,66,67].includes(code)) return ["🌧️", "Rain"];
+  if ([71,73,75,77].includes(code)) return ["❄️", "Snow"];
+  if ([80,81,82].includes(code)) return ["🌧️", "Rain showers"];
+  if ([85,86].includes(code)) return ["🌨️", "Snow showers"];
+  if ([95,96,99].includes(code)) return ["⛈️", "Thunderstorm"];
   return ["🌡️", "Weather update"];
 }
 
@@ -246,8 +223,7 @@ async function searchWeather() {
       "&longitude=" +
       place.longitude +
       "&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m" +
-      "&daily=precipitation_probability_max" +
-      "&timezone=auto";
+      "&daily=precipitation_probability_max&timezone=auto";
 
     const weatherResponse = await fetch(weatherURL);
     if (!weatherResponse.ok) throw new Error("Weather data unavailable.");
@@ -260,21 +236,15 @@ async function searchWeather() {
       place.name + (place.country ? ", " + place.country : "");
 
     document.getElementById("weatherIcon").textContent = info[0];
-
     document.getElementById("temperature").textContent =
       Math.round(current.temperature_2m) + "°C";
-
     document.getElementById("condition").textContent = info[1];
-
     document.getElementById("wind").textContent =
       current.wind_speed_10m + " km/h";
-
     document.getElementById("rain").textContent =
       (data.daily.precipitation_probability_max[0] ?? "—") + "%";
-
     document.getElementById("humidity").textContent =
       current.relative_humidity_2m + "%";
-
     document.getElementById("feels").textContent =
       Math.round(current.apparent_temperature) + "°C";
 
@@ -286,6 +256,14 @@ async function searchWeather() {
       "Something went wrong. Please try again.";
     card.style.display = "none";
   }
+}
+
+// Register service worker
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js")
+      .catch(error => console.log("Service Worker:", error));
+  });
 }
 </script>
 
