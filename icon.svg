@@ -1,1 +1,9 @@
-
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="110" fill="#f3eee5"/>
+  <circle cx="256" cy="210" r="75" fill="#d99b45"/>
+  <g stroke="#d99b45" stroke-width="16" stroke-linecap="round">
+    <path d="M256 85V55 M256 365V335 M125 210H95 M417 210H387 M163 117L142 96 M370 324L349 303 M349 117L370 96 M142 324L163 303"/>
+  </g>
+  <path d="M145 340c-38 0-55-25-55-52s22-49 52-49c12-48 55-76 104-65 31 7 52 30 60 59 40-7 75 22 75 60 0 27-22 47-52 47z" fill="#8e806e"/>
+  <text x="256" y="420" font-size="43" font-family="Georgia" font-weight="bold" text-anchor="middle" fill="#29251f">PRASHUU</text>
+</svg>
